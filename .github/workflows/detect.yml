@@ -1,0 +1,23 @@
+name: cloud-anomaly-check
+
+# Phase 7 "cloud deployment": runs the detector on a schedule, emails via Resend on anomalies.
+on:
+  schedule:
+    - cron: "0 * * * *"   # hourly
+  workflow_dispatch:        # manual run button
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas scikit-learn
+      - name: Run detection + alert
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_TO: ${{ secrets.ALERT_TO }}
+          ALERT_FROM: ${{ secrets.ALERT_FROM }}
+        run: python alert.py ec2_cpu_utilization_ac20cd.csv

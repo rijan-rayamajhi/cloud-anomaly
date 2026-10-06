@@ -1,0 +1,6 @@
+# Streamlit Community Cloud installs these for the dashboard.
+# The GitHub Actions job installs only pandas + scikit-learn (see .github/workflows/detect.yml).
+streamlit
+pandas
+scikit-learn
+prophet
