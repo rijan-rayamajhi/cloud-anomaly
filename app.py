@@ -16,7 +16,13 @@ df = load(name)
 train, test = split(df)
 
 # --- detection on the test half ---
-pred = DETECTORS[model](train, test) if test.label.sum() or True else None
+try:
+    pred = DETECTORS[model](train, test)
+except ImportError:
+    st.warning(f"'{model}' needs PyTorch, which isn't installed on the hosted app. "
+               "Showing Isolation Forest instead; run locally for the LSTM.")
+    model = "iforest"
+    pred = DETECTORS[model](train, test)
 test = test.assign(pred=pred)
 flagged = test[test.pred == 1]
 truth = df[df.label == 1]
@@ -41,8 +47,12 @@ st.line_chart(chart)
 st.caption("Line = metric. 'true anomaly' = labelled windows. 'flagged' = points this detector raised on the test half.")
 
 if show_fc:
-    from forecast import forecast_one, H
-    from prophet import Prophet
+    try:
+        from prophet import Prophet
+    except ImportError:
+        st.info("Forecast needs Prophet — not installed on the hosted app. Run locally to see it.")
+        st.stop()
+    from forecast import H
     hist = df.iloc[:-H].rename(columns={"timestamp": "ds", "value": "y"})[["ds", "y"]]
     m = Prophet(weekly_seasonality=False, daily_seasonality=True).fit(hist)
     fc = m.predict(m.make_future_dataframe(periods=H, freq="5min"))

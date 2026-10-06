@@ -1,6 +1,5 @@
-# Streamlit Community Cloud installs these for the dashboard.
-# The GitHub Actions job installs only pandas + scikit-learn (see .github/workflows/detect.yml).
+# Streamlit Community Cloud installs these. Lean on purpose for a fast, reliable deploy.
+# LSTM (torch) and forecasting (prophet) are optional and run locally only.
 streamlit
 pandas
 scikit-learn
-prophet
