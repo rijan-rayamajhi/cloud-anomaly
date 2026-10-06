@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 from data import load, all_series, split
 from detect import DETECTORS
+from metrics_meta import label, unit, desc
 
 st.set_page_config(page_title="Cloud Anomaly Detector", layout="wide")
 
@@ -18,7 +19,9 @@ st.markdown(
     "real problems it catches.")
 
 st.sidebar.header("Try it")
-name = st.sidebar.selectbox("1. Pick a server metric", all_series())
+name = st.sidebar.selectbox("1. Pick a server metric", all_series(), format_func=label,
+                            index=all_series().index("ec2_cpu_utilization_ac20cd.csv"))
+st.sidebar.caption(f"📊 {desc(name)}  ·  measured in {unit(name)}")
 model = st.sidebar.selectbox("2. Pick a detection method", list(DETECTORS),
                              format_func=lambda m: NICE.get(m, m))
 st.sidebar.caption("Switch the method to compare the old fixed rule against the smarter ones.")
@@ -36,7 +39,8 @@ except ImportError:
 test = test.assign(pred=pred)
 flagged = test[test.pred == 1]
 
-st.subheader(f"{name}  —  {NICE.get(model, model)}")
+st.subheader(f"{label(name)}  —  {NICE.get(model, model)}")
+st.caption(f"{desc(name)}  ·  values in {unit(name)}  ·  one reading every 5 minutes")
 
 # --- scoreboard, in plain words ---
 tp = int(((test.pred == 1) & (test.label == 1)).sum())
@@ -53,7 +57,7 @@ if real:
 
 # --- the chart ---
 base = df.set_index("timestamp")
-chart = base[["value"]].rename(columns={"value": "Server metric"})
+chart = base[["value"]].rename(columns={"value": f"{label(name)} ({unit(name)})"})
 chart["Real problem"] = (base.label * base.value).replace(0, None)
 chart["Detector flagged"] = flagged.set_index("timestamp").value.reindex(chart.index)
 st.line_chart(chart)
