@@ -2,6 +2,8 @@
 
 **A comparative study of classical and foundation-model anomaly detection on cloud server metrics, under correct evaluation.**
 
+🔴 **[Live dashboard](https://cloud-anomaly-rijan-rayamajhi.streamlit.app/)** · 📄 **[Full report](REPORT.md)**
+
 Fixed-threshold monitoring misses gradual failures and floods teams with false alarms. This project
 compares three detectors on real AWS CloudWatch metrics and — crucially — scores them with
 threshold-independent metrics (VUS-PR), avoiding the point-adjustment protocol now known to overstate
