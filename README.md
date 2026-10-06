@@ -1,4 +1,4 @@
-# cloud-anomoly
+# cloud-anomaly
 
 **A comparative study of classical and foundation-model anomaly detection on cloud server metrics, under correct evaluation.**
 
